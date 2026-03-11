@@ -1,6 +1,5 @@
 package com.sky.service.impl;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
@@ -19,7 +18,6 @@ import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
@@ -108,11 +106,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee queryById(Long id) {
         Employee employee= employeeMapper.queryById(id);
+        employee.setPassword("****");//防止泄露密码
         return employee;
     }
 
     @Override
-    public void update(Employee employee) {
+    public void update(EmployeeDTO employeeDTO) {
+        Employee employee=new Employee();
+        BeanUtils.copyProperties(employeeDTO,employee);
         employee.setUpdateTime(LocalDateTime.now());
         employee.setUpdateUser(BaseContext.getCurrentId());
         employeeMapper.update(employee);
