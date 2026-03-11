@@ -107,9 +107,10 @@ public class EmployeeController {
 
     @PutMapping
     @ApiOperation("修改员工信息")
-    public Result update(@RequestBody Employee employee){
-        log.info("修改员工信息{}",employee);
-        employeeService.update(employee);
+    //DTO 只包含前端允许修改的字段（比如姓名、性别、手机号）。防止“非法字段注入”
+    public Result update(@RequestBody EmployeeDTO employeeDTO){
+        log.info("修改员工信息{}",employeeDTO);
+        employeeService.update(employeeDTO);
         return Result.success();
     }
 
