@@ -50,8 +50,10 @@ public class DishSeviceImpl implements DishSevice {
         if(flavors!=null&&flavors.size()!=0){
             flavors.forEach(flavor->
                     flavor.setDishId(dishId));
+
+            dishFlavorMapper.insertBatch(flavors);
         }
-        dishFlavorMapper.insertBatch(flavors);
+
 
     }
 
@@ -87,9 +89,58 @@ public class DishSeviceImpl implements DishSevice {
             throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
         }
 
-        for (Long id : ids) {
+       /* for (Long id : ids) {
             dishMapper.deleteById(id);
             dishFlavorMapper.deleteByDishId(id);
+        }*/
+
+        dishMapper.deleteByIds(ids);
+        dishFlavorMapper.deleteByDishIds(ids);
+
+    }
+
+    /**
+     * 回显菜品
+     * @param id
+     * @return
+     */
+    @Override
+    @Transactional
+    public DishVO selectById(Long id) {
+        DishVO dishVO = new DishVO();
+        Dish dish= dishMapper.selectById(id);
+        BeanUtils.copyProperties(dish,dishVO);
+        List<DishFlavor> dishFlavors=dishFlavorMapper.selectById(id);
+        dishVO.setFlavors(dishFlavors);
+        return dishVO;
+    }
+
+    /**
+     * 修改菜品：dish表和dish_flavors表
+     * @param dishDTO
+     */
+    @Override
+    @Transactional
+    public void update(DishDTO dishDTO) {
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO,dish);
+        dishMapper.update(dish);
+        Long dishId = dish.getId();
+
+        /**
+         * 可以直接调用已经写好的insertBatch，只要在此之前删除口味数据就行
+         */
+        //删除原有的口味数据
+        dishFlavorMapper.deleteByDishId(dishId);
+        //新增口味数据
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+        if(flavors!=null && flavors.size()!=0){
+            flavors.forEach(flavor->{
+                flavor.setDishId(dishId);
+            });
+            dishFlavorMapper.insertBatch(flavors);
         }
+
+
     }
 }
