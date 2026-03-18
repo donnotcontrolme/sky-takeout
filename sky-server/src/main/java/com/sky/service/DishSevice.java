@@ -17,4 +17,8 @@ public interface DishSevice {
     DishVO selectById(Long id);
 
     void update(DishDTO dishDTO);
+
+    List<DishVO> list(Long id);
+
+    void startOrStop(Integer status, Long id);
 }

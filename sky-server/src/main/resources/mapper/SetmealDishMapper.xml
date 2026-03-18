@@ -10,4 +10,17 @@
             #{di}
         </foreach>
     </select>
+
+    <!--    批量插入-->
+    <insert id="insertBatch">
+        insert into setmeal_dish (setmeal_id,dish_id,name,price,copies) values
+        <foreach collection="setmealDishes" item="sd" separator=",">
+            (#{sd.setmealId},#{sd.dishId},#{sd.name},#{sd.price},#{sd.copies})
+        </foreach>
+    </insert>
+
+<!--删除套餐关联菜品-->
+    <delete id="delete">
+        delete from setmeal_dish where setmeal_id =#{setmealId}
+    </delete>
 </mapper>
