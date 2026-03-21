@@ -11,6 +11,8 @@ import com.sky.vo.DishVO;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,11 +31,12 @@ public class DishController {
 
     @PostMapping
     @ApiOperation("新增菜品")
+    @CacheEvict(cacheNames = "dishCache",key = "'dish_'+#dishDTO.categoryId")
     public Result save(@RequestBody DishDTO dishDTO){
         log.info("新增菜品：{}",dishDTO);
         dishSevice.save(dishDTO);
-        String key="dish_"+dishDTO.getCategoryId();
-        cleanCache(key);
+        /*String key="dish_"+dishDTO.getCategoryId();
+        cleanCache(key);*/
         return Result.success();
 
     }
@@ -48,10 +51,11 @@ public class DishController {
 
     @DeleteMapping
     @ApiOperation("批量删除菜品")
+    @CacheEvict(cacheNames = "dishCache",allEntries = true)
     public Result delete(@RequestParam List<Long> ids){
         log.info("要删除的菜品id：{}",ids);
         dishSevice.deleteById(ids);
-        cleanCache("dish_*");
+        //cleanCache("dish_*");
         return Result.success();
     }
 
@@ -65,17 +69,19 @@ public class DishController {
 
     @ApiOperation("修改菜品")
     @PutMapping
+    @CacheEvict(cacheNames = "dishCache",allEntries = true)
     public Result update(@RequestBody DishDTO dishDTO){
         dishSevice.update(dishDTO);
-        cleanCache("dish_*");
+//        cleanCache("dish_*");
         return Result.success();
     }
     @ApiOperation("起售停售菜品")
     @PostMapping("/status/{status}")
+    @CacheEvict(cacheNames = "dishCache",allEntries = true)
     public Result startOrStop(@PathVariable Integer status,Long id){
         log.info("id{}菜品启停售{}",id,status);
         dishSevice.startOrStop(status,id);
-        cleanCache("dish_*");
+//        cleanCache("dish_*");
         return Result.success();
     }
 
@@ -87,8 +93,8 @@ public class DishController {
         return Result.success(dishList);
     }
 
-    private void cleanCache(String pattern){
+   /* private void cleanCache(String pattern){
         Set keys = redisTemplate.keys(pattern);
         redisTemplate.delete(keys);
-    }
+    }*/
 }
