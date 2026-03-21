@@ -41,9 +41,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         List<ShoppingCart> list = shoppingCartMapper.getlist(shoppingCart);
         if (list != null && list.size() == 1) {
             ShoppingCart cart = list.get(0);
-            //先计算单价金额后更新金额
+            /*//先计算单价金额后更新金额
             BigDecimal add = cart.getAmount().add(cart.getAmount().divide(new BigDecimal(cart.getNumber())));
-            cart.setAmount(add);
+            cart.setAmount(add);*/
             //再更新数量
             cart.setNumber(cart.getNumber()+1);
 
@@ -70,5 +70,16 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
             shoppingCartMapper.insert(shoppingCart);
         }
+    }
+
+    @Override
+    public List<ShoppingCart> getList() {
+        Long id = BaseContext.getCurrentId();
+        ShoppingCart shoppingCart = ShoppingCart.builder()
+                .id(id)
+                .build();
+        List<ShoppingCart> list = shoppingCartMapper.getlist(shoppingCart);
+        return list;
+
     }
 }
