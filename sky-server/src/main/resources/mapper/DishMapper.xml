@@ -50,7 +50,7 @@
     </update>
 
 <!--    根据分类id查询所用菜品-->
-    <select id="list" resultType="com.sky.vo.DishVO">
+    <select id="list" resultType="com.sky.entity.Dish">
         select d.*,c.name categoryName
         from dish d left join category c on d.category_id = c.id
         where d.category_id = #{categoryId}

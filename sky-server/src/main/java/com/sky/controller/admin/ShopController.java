@@ -1,5 +1,6 @@
 package com.sky.controller.admin;
 
+import com.sky.enumeration.ShopStatus;
 import com.sky.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,7 +22,8 @@ public class ShopController {
     @ApiOperation("设置店铺状态")
     @PutMapping("/{status}")
     public Result setStatus(@PathVariable Integer status){
-        log.info("设置店铺状态为{}",status==1?"营业":"打烊");
+        ShopStatus shopStatus = ShopStatus.getStatus(status);
+        log.info("设置店铺状态为{}",shopStatus.getDes());
         redisTemplate.opsForValue().set(KEY,status);
         return Result.success();
     }
@@ -30,7 +32,8 @@ public class ShopController {
     @GetMapping("status")
     public Result<Integer> getStatus(){
         Integer status = (Integer) redisTemplate.opsForValue().get(KEY);
-        log.info("店铺状态为{}",status==1?"营业中":"打烊中");
+        ShopStatus shopStatus = ShopStatus.getStatus(status);
+        log.info("店铺状态为{}",shopStatus.getDes());
         return Result.success(status);
     }
 

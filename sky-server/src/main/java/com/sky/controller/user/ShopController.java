@@ -1,5 +1,6 @@
 package com.sky.controller.user;
 
+import com.sky.enumeration.ShopStatus;
 import com.sky.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,7 +25,8 @@ public class ShopController {
     @GetMapping("status")
     public Result<Integer> getStatus(){
         Integer status = (Integer) redisTemplate.opsForValue().get(KEY);
-        log.info("店铺状态为{}",status==1?"营业中":"打烊中");
+        ShopStatus shopStatus = ShopStatus.getStatus(status);
+        log.info("店铺状态为{}",shopStatus.getDes());
         return Result.success(status);
     }
 
