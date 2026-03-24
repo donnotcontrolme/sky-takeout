@@ -22,13 +22,14 @@
 
     </insert>
 
+<!--    批量插入购物车数据-->
+    <insert id="insertBatch">
+        insert into shopping_cart(name, image, user_id, dish_id, setmeal_id, dish_flavor, number, amount, create_time)
+        values
+        <foreach collection="list" item="shoppingCart" separator=",">
+            (#{shoppingCart.name}, #{shoppingCart.image}, #{shoppingCart.userId}, #{shoppingCart.dishId}, #{shoppingCart.setmealId}, #{shoppingCart.dishFlavor}, #{shoppingCart.number}, #{shoppingCart.amount}, #{shoppingCart.createTime})
+        </foreach>
+    </insert>
 
-<!--    删除购物车中单个商品-->
-    <delete id="delete">
-        delete from shopping_cart
-        <where>
-            <if test="dishId!=null">and dish_id=#{dishId}</if>
-            <if test="setmealId!=null">and setmeal_id=#{setmealId}</if>
-        </where>
-    </delete>
+
 </mapper>

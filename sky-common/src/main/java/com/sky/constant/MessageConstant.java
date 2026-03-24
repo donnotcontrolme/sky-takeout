@@ -25,5 +25,10 @@ public class MessageConstant {
     public static final String ORDER_STATUS_ERROR = "订单状态错误";
     public static final String ORDER_NOT_FOUND = "订单不存在";
     public static final String DISH_ON_STEMEAL_SALE="该菜品在套餐中启售,不能停售";
+    public static final String ADDRESS_NOT_FOUND_ADMIN = "商家地址解析失败";
+    public static final String ADDRESS_NOT_FOUND_USER = "用户地址解析失败";
+    public static final String DISTANCE_NOT_FOUND ="获取配送距离失败";
+    public static final String DISTANCE_TOO_LONG="超出配送距离";
+
 
 }
