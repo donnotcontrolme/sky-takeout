@@ -414,7 +414,25 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orders);
     }
 
-    // 计算是否超出配送范围
+    /**
+     * 订单催单
+     * @param id
+     */
+    @Override
+    public void reminder(Long id) {
+        // 根据id查询订单
+        Orders ordersDB = orderMapper.getById(id);
+
+        // 校验订单是否存在
+        if (ordersDB == null ) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+    }
+
+    /**
+     * 检查地址是否超出配送范围
+     * @param address
+     */
     public void checkOutOfRange(String address){
         HashMap<String, String> map = new HashMap<>();
         // 获取店铺经纬度
