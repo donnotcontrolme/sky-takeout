@@ -427,6 +427,12 @@ public class OrderServiceImpl implements OrderService {
         if (ordersDB == null ) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("type","2");
+        map.put("orderId",id);
+        map.put("content","提醒：订单号"+ordersDB.getNumber());
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
     }
 
     /**
