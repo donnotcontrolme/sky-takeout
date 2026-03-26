@@ -19,6 +19,7 @@ import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
+import com.sky.websocket.WebSocketServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,8 @@ public class OrderServiceImpl implements OrderService {
     private UserMapper userMapper;
     @Autowired
     private WeChatPayUtil weChatPayUtil;
+    @Autowired
+    private WebSocketServer webSocketServer;
 
     @Value("${sky.shop.address}")
     private String shopAddress;
@@ -71,9 +74,11 @@ public class OrderServiceImpl implements OrderService {
         if(addressBook.getDetail()==null){
             throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
         }
-        //判断是否超出配送距离
+        //TODO:
+        //记得打开
+        /*//判断是否超出配送距离
         String address = addressBook.getProvinceName() + addressBook.getCityName() + addressBook.getDistrictName() + addressBook.getDetail();
-        checkOutOfRange(address);
+        checkOutOfRange(address);*/
         //判断是否购物车为空
         ShoppingCart cartList= new ShoppingCart();
         cartList.setUserId(userId);
@@ -170,6 +175,12 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(orders);
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("orderId",ordersDB.getId());
+        map.put("type",1);
+        map.put("content","订单号："+outTradeNo);
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
     }
 
 
@@ -403,6 +414,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orders);
     }
 
+    // 计算是否超出配送范围
     public void checkOutOfRange(String address){
         HashMap<String, String> map = new HashMap<>();
         // 获取店铺经纬度
